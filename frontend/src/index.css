@@ -1,0 +1,52 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    @apply border-slate-200;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-slate-50 text-slate-900 font-sans antialiased;
+  }
+
+  button,
+  input,
+  select,
+  textarea {
+    font: inherit;
+  }
+}
+
+@layer components {
+  .primary-button {
+    @apply inline-flex min-h-11 items-center justify-center rounded-xl bg-compass-700 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-compass-900 focus:outline-none focus:ring-2 focus:ring-compass-300 focus:ring-offset-2;
+  }
+
+  .secondary-button {
+    @apply inline-flex min-h-11 items-center justify-center rounded-xl border border-slate-300 bg-white px-5 py-2.5 text-sm font-semibold text-compass-950 transition hover:border-compass-300 hover:bg-compass-100;
+  }
+
+  .form-input {
+    @apply min-h-11 w-full rounded-xl border border-slate-300 bg-white px-3.5 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-compass-500 focus:ring-4 focus:ring-compass-100;
+  }
+
+  .section-kicker {
+    @apply text-xs font-bold uppercase tracking-[0.16em] text-compass-500;
+  }
+
+  .care-badge {
+    @apply rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-700;
+  }
+
+  .care-badge-positive {
+    @apply bg-emerald-100 text-emerald-800;
+  }
+}
