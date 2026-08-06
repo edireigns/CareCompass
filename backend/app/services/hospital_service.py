@@ -13,7 +13,7 @@ from app.schemas.hospital import (
     HospitalSummary, HospitalDetail, RankingWeights, RecommendResponse,
 )
 from app.services.ranking_service import compute_overall_score
-
+from app.services.ai_service import ai_service
 
 class HospitalService:
     def __init__(self, repo: HospitalRepository):
@@ -40,13 +40,13 @@ class HospitalService:
         return summary
 
     def search(
-        self, city=None, zip_code=None, specialty=None, emergency_only=False,
+        self, city=None, state=None, zip_code=None, specialty=None, emergency_only=False,
         trauma_level=None, teaching_only=False, pediatric_only=False,
         user_lat=None, user_lon=None, weights: Optional[RankingWeights] = None,
     ) -> list[HospitalSummary]:
         weights = weights or RankingWeights()
         hospitals = self.repo.search(
-            city=city, zip_code=zip_code, specialty=specialty,
+            city=city, state=state, zip_code=zip_code, specialty=specialty,
             emergency_only=emergency_only, trauma_level=trauma_level,
             teaching_only=teaching_only, pediatric_only=pediatric_only,
         )
@@ -91,32 +91,68 @@ class HospitalService:
 
     def rankings(self, limit: int = 10, weights: Optional[RankingWeights] = None) -> list[HospitalSummary]:
         weights = weights or RankingWeights()
-        hospitals = self.repo.list_all(limit=limit * 3)  # over-fetch, then sort + trim
+        hospitals = self.repo.list_all(limit=10_000) # over-fetch, then sort + trim
         results = [self._to_summary(h, weights) for h in hospitals]
         return sorted(results, key=lambda h: h.overall_score or 0, reverse=True)[:limit]
 
-    def recommend(self, question: str, zip_code: Optional[str] = None, lat: Optional[float] = None, lon: Optional[float] = None) -> RecommendResponse:
+    async def recommend(
+        self,
+        question: str,
+        city: Optional[str] = None,
+        state: Optional[str] =None,
+        zip_code: Optional[str] = None,
+        lat: Optional[float] = None,
+        lon: Optional[float] = None,
+    ) -> RecommendResponse:
         """
-        AI Recommendation Assistant — grounding step only.
-
-        This intentionally does NOT call an LLM in the scaffold. It narrows
-        candidate hospitals using the same search/ranking logic used
-        elsewhere, so the eventual LLM call only has to *summarize* this
-        pre-filtered, factual data rather than invent anything (per spec:
-        "The AI should summarize the supporting data rather than invent
-        information."). Wire in an Anthropic API call here that receives
-        `candidates` as context and produces `answer`.
+        Select relevant hospitals using CareCompass ranking logic, then ask
+        OpenAI to explain the results using only the selected CMS data.
         """
         weights = RankingWeights()
-        if lat is not None and lon is not None:
-            candidates = self.nearby(lat, lon, radius_miles=25, weights=weights)[:5]
-        else:
-            candidates = self.rankings(limit=5, weights=weights)
 
-        answer = (
-            f"Based on public CMS quality, outcomes, and wait-time data, here are the "
-            f"top {len(candidates)} matches for: \"{question}\". This is a scaffold "
-            f"response — connect an LLM call here, passing `candidates` as grounding "
-            f"context, to generate a natural-language summary instead."
+        if lat is not None and lon is not None:
+            candidates = self.nearby(
+                lat,
+                lon,
+                radius_miles=25,
+                weights=weights,
+            )[:5]
+        elif city or state or zip_code:
+            candidates = self.search(
+                city=city.strip() if city else None,
+                state=state.strip().upper() if state else None,
+                zip_code=zip_code.strip() if zip_code else None,
+                weights=weights,
+            )[:5]
+        else:
+            candidates = self.rankings(
+                limit=5,
+                weights=weights,
+            )
+
+        if not candidates:
+            return RecommendResponse(
+                answer=(
+                    "No hospitals matched the provided location or search "
+                    "information."
+                ),
+                supporting_hospitals=[],
+            )
+
+        hospital_ids = [hospital.id for hospital in candidates]
+        detailed_hospitals = self.compare(hospital_ids, weights)
+
+        cms_context = [
+            hospital.model_dump(mode="json")
+            for hospital in detailed_hospitals
+        ]
+
+        answer = await ai_service.answer_question(
+            question=question,
+            hospital_data=cms_context,
         )
-        return RecommendResponse(answer=answer, supporting_hospitals=candidates)
+
+        return RecommendResponse(
+            answer=answer,
+            supporting_hospitals=candidates,
+        )
