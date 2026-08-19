@@ -90,7 +90,9 @@ class CompareRequest(BaseModel):
 
 
 class RecommendRequest(BaseModel):
-    question: str
+    question: str = Field(min_length=3,  max_length=1000)
+    city: Optional[str] = None
+    state: Optional[str] = Field(default=None, min_length=2, max_length=2)
     zip_code: Optional[str] = None
     latitude: Optional[float] = None
     longitude: Optional[float] = None

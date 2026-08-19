@@ -33,6 +33,7 @@ class HospitalRepository:
     def search(
         self,
         city: Optional[str] = None,
+        state: Optional[str] = None,
         zip_code: Optional[str] = None,
         specialty: Optional[str] = None,
         emergency_only: bool = False,
@@ -45,6 +46,8 @@ class HospitalRepository:
 
         if city:
             query = query.filter(Location.city.ilike(f"%{city}%"))
+        if state:
+            query = query.filter(Location.state.ilike(state))
         if zip_code:
             query = query.filter(Location.zip_code == zip_code)
         if specialty:

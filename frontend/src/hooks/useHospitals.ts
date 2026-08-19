@@ -61,9 +61,18 @@ export function useCompare(ids: string[]) {
   });
 }
 
+export interface RecommendPayload{
+  question: string;
+  city?: string;
+  state?: string;
+  zip_code?: string;
+  latitude?: number;
+  longtitude?: number;
+}
+
 export function useRecommend() {
   return useMutation({
-    mutationFn: async (payload: { question: string; zip_code?: string; latitude?: number; longitude?: number }) => {
+    mutationFn: async (payload: RecommendPayload) => {
       const { data } = await apiClient.post<RecommendResponse>("/recommend", payload);
       return data;
     },

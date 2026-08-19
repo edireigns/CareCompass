@@ -23,6 +23,9 @@ class Settings(BaseSettings):
     cms_care_compare_base_url: str = "https://data.cms.gov/provider-data/api/1/datastore/query"
     google_maps_api_key: str = ""
 
+    openai_api_key:str =""
+    openai_model: str ="gpt-5.6"
+
     model_config = SettingsConfigDict(env_file=".env", case_sensitive=False)
 
     @property

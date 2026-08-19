@@ -12,7 +12,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.config import get_settings
 from app.api.routes import (
-    search, nearby, hospital, compare, recommend, specialties, insurance, rankings,
+    search, nearby, hospital, compare, recommend, specialties, insurance, rankings,ai,
 )
 
 logging.basicConfig(level=logging.INFO)
@@ -42,7 +42,7 @@ app.include_router(recommend.router, prefix=settings.api_v1_prefix)
 app.include_router(specialties.router, prefix=settings.api_v1_prefix)
 app.include_router(insurance.router, prefix=settings.api_v1_prefix)
 app.include_router(rankings.router, prefix=settings.api_v1_prefix)
-
+app.include_router(ai.router, prefix=settings.api_v1_prefix)
 
 @app.get("/health", tags=["meta"])
 def health_check():
