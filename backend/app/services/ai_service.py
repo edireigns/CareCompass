@@ -6,6 +6,10 @@ from openai import AsyncOpenAI
 from app.core.config import get_settings
 
 
+class AIUnavailableError(RuntimeError):
+    """The optional AI assistant has not been configured for this service."""
+
+
 AI_INSTRUCTIONS = """
 You are the CareCompass hospital data assistant.
 
@@ -25,10 +29,10 @@ class AIService:
     def __init__(self) -> None:
         settings = get_settings()
 
-        if not settings.openai_api_key:
-            raise RuntimeError("OPENAI_API_KEY is not configured")
-
-        self.client = AsyncOpenAI(api_key=settings.openai_api_key)
+        self.client = (
+            AsyncOpenAI(api_key=settings.openai_api_key)
+            if settings.openai_api_key else None
+        )
         self.model = settings.openai_model
 
     async def answer_question(
@@ -36,6 +40,9 @@ class AIService:
         question: str,
         hospital_data: dict[str, Any] | list[dict[str, Any]],
     ) -> str:
+        if self.client is None:
+            raise AIUnavailableError("The AI assistant is not configured for this preview.")
+
         cms_context = json.dumps(
             hospital_data,
             indent=2,

@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from app.api.deps import get_db
 from app.repositories.hospital_repository import HospitalRepository
 from app.schemas.ai import AIAnswerResponse, AIQuestionRequest
-from app.services.ai_service import ai_service
+from app.services.ai_service import AIUnavailableError, ai_service
 
 
 router = APIRouter(prefix="/ai", tags=["AI Assistant"])
@@ -97,6 +97,11 @@ async def ask_ai(
             question=request.question,
             hospital_data=hospital_context,
         )
+    except AIUnavailableError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail=str(exc),
+        ) from exc
     except OpenAIError:
         raise HTTPException(
             status_code=status.HTTP_502_BAD_GATEWAY,

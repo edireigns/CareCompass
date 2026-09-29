@@ -10,6 +10,7 @@ from app.api.deps import get_db
 from app.repositories.hospital_repository import HospitalRepository
 from app.schemas.hospital import RecommendRequest, RecommendResponse
 from app.services.hospital_service import HospitalService
+from app.services.ai_service import AIUnavailableError
 
 
 router = APIRouter(tags=["recommend"])
@@ -32,6 +33,11 @@ async def recommend(
             lat=payload.latitude,
             lon=payload.longitude,
         )
+    except AIUnavailableError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail=str(exc),
+        ) from exc
     except OpenAIError:
         logger.exception("OpenAI request failed")
 
