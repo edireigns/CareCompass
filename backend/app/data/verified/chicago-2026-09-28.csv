@@ -1,0 +1,41 @@
+facility_id,kind,name,source_url,source_label,verified_on,expires_on
+140281,insurance,2026 Blue Cross Blue Shield - Blue Choice PPO,https://www.nm.org/patients-and-visitors/billing-and-insurance/insurance-information/accepted-insurance-plans/northwestern-memorial-hospital,Northwestern Memorial hospital plan directory,2026-09-28,2026-12-31
+140281,insurance,2026 Blue Cross Blue Shield - Blue Choice Options (Tier 1),https://www.nm.org/patients-and-visitors/billing-and-insurance/insurance-information/accepted-insurance-plans/northwestern-memorial-hospital,Northwestern Memorial hospital plan directory,2026-09-28,2026-12-31
+140281,insurance,2026 Blue Cross Blue Shield - PPO,https://www.nm.org/patients-and-visitors/billing-and-insurance/insurance-information/accepted-insurance-plans/northwestern-memorial-hospital,Northwestern Memorial hospital plan directory,2026-09-28,2026-12-31
+140281,insurance,2026 Blue Choice Preferred Gold PPO 901,https://www.nm.org/patients-and-visitors/billing-and-insurance/insurance-information/accepted-insurance-plans/northwestern-memorial-hospital,Northwestern Memorial hospital plan directory,2026-09-28,2026-12-31
+140281,insurance,2026 Blue Choice Preferred Gold PPO Standard - RX Copays,https://www.nm.org/patients-and-visitors/billing-and-insurance/insurance-information/accepted-insurance-plans/northwestern-memorial-hospital,Northwestern Memorial hospital plan directory,2026-09-28,2026-12-31
+140281,insurance,2026 Blue Choice Preferred Silver PPO Standard - Select Rx Copays,https://www.nm.org/patients-and-visitors/billing-and-insurance/insurance-information/accepted-insurance-plans/northwestern-memorial-hospital,Northwestern Memorial hospital plan directory,2026-09-28,2026-12-31
+140281,insurance,Aetna Choice POS II,https://www.nm.org/patients-and-visitors/billing-and-insurance/insurance-information/accepted-insurance-plans/northwestern-memorial-hospital,Northwestern Memorial hospital plan directory,2026-09-28,
+140281,insurance,Cigna - Open Access Plus,https://www.nm.org/patients-and-visitors/billing-and-insurance/insurance-information/accepted-insurance-plans/northwestern-memorial-hospital,Northwestern Memorial hospital plan directory,2026-09-28,
+140281,insurance,United Healthcare - Choice Plus,https://www.nm.org/patients-and-visitors/billing-and-insurance/insurance-information/accepted-insurance-plans/northwestern-memorial-hospital,Northwestern Memorial hospital plan directory,2026-09-28,
+140281,insurance,United Healthcare - Options PPO,https://www.nm.org/patients-and-visitors/billing-and-insurance/insurance-information/accepted-insurance-plans/northwestern-memorial-hospital,Northwestern Memorial hospital plan directory,2026-09-28,
+140088,insurance,Aetna Choice POS II,https://www.uchicagomedicine.org/patients-visitors/patient-information/insurance/commercial-insurance-plans,UChicago Medicine commercial plan directory; UChicago column,2026-09-28,
+140088,insurance,Aetna Open Choice PPO,https://www.uchicagomedicine.org/patients-visitors/patient-information/insurance/commercial-insurance-plans,UChicago Medicine commercial plan directory; UChicago column,2026-09-28,
+140088,insurance,BCBS BlueEdge HSA [PPO],https://www.uchicagomedicine.org/patients-visitors/patient-information/insurance/commercial-insurance-plans,UChicago Medicine commercial plan directory; UChicago column,2026-09-28,
+140088,insurance,BCBS PPO [PPO],https://www.uchicagomedicine.org/patients-visitors/patient-information/insurance/commercial-insurance-plans,UChicago Medicine commercial plan directory; UChicago column,2026-09-28,
+140088,insurance,Cigna Choice Fund Open Access Plus,https://www.uchicagomedicine.org/patients-visitors/patient-information/insurance/commercial-insurance-plans,UChicago Medicine commercial plan directory; UChicago column,2026-09-28,
+140088,insurance,Cigna PPO,https://www.uchicagomedicine.org/patients-visitors/patient-information/insurance/commercial-insurance-plans,UChicago Medicine commercial plan directory; UChicago column,2026-09-28,
+140088,insurance,United Healthcare Choice Plus (POS/PPO),https://www.uchicagomedicine.org/patients-visitors/patient-information/insurance/commercial-insurance-plans,UChicago Medicine commercial plan directory; UChicago column,2026-09-28,
+140088,insurance,United Healthcare Options (PPO),https://www.uchicagomedicine.org/patients-visitors/patient-information/insurance/commercial-insurance-plans,UChicago Medicine commercial plan directory; UChicago column,2026-09-28,
+140088,insurance,University of Chicago Health Plan (UCHP),https://www.uchicagomedicine.org/patients-visitors/patient-information/insurance/commercial-insurance-plans,UChicago Medicine commercial plan directory; UChicago column,2026-09-28,
+140281,specialty,Allergy and Immunology,https://www.nm.org/locations/northwestern-memorial-hospital,Northwestern Memorial departments and services,2026-09-28,
+140281,specialty,Behavioral Health,https://www.nm.org/locations/northwestern-memorial-hospital,Northwestern Memorial departments and services,2026-09-28,
+140281,specialty,Cancer Care,https://www.nm.org/locations/northwestern-memorial-hospital,Northwestern Memorial departments and services,2026-09-28,
+140281,specialty,Cardiovascular Care,https://www.nm.org/locations/northwestern-memorial-hospital,Northwestern Memorial departments and services,2026-09-28,
+140281,specialty,Dermatology,https://www.nm.org/locations/northwestern-memorial-hospital,Northwestern Memorial departments and services,2026-09-28,
+140281,specialty,Ear Nose and Throat (ENT),https://www.nm.org/locations/northwestern-memorial-hospital,Northwestern Memorial departments and services,2026-09-28,
+140281,specialty,Hematology,https://www.nm.org/locations/northwestern-memorial-hospital,Northwestern Memorial departments and services,2026-09-28,
+140281,specialty,Infectious Disease,https://www.nm.org/locations/northwestern-memorial-hospital,Northwestern Memorial departments and services,2026-09-28,
+140281,specialty,Nephrology,https://www.nm.org/locations/northwestern-memorial-hospital,Northwestern Memorial departments and services,2026-09-28,
+140281,specialty,Neurosciences,https://www.nm.org/locations/northwestern-memorial-hospital,Northwestern Memorial departments and services,2026-09-28,
+140281,specialty,Orthopaedics,https://www.nm.org/locations/northwestern-memorial-hospital,Northwestern Memorial departments and services,2026-09-28,
+140281,specialty,Rheumatology,https://www.nm.org/locations/northwestern-memorial-hospital,Northwestern Memorial departments and services,2026-09-28,
+140119,specialty,Neurology and Neurosurgery,https://www.rush.edu/news/rush-among-us-news-top-hospitals-seventh-straight-year,"Rush hospital-specific clinical programs, August 2026",2026-09-28,
+140119,specialty,Orthopedics,https://www.rush.edu/news/rush-among-us-news-top-hospitals-seventh-straight-year,"Rush hospital-specific clinical programs, August 2026",2026-09-28,
+140119,specialty,Cardiology,https://www.rush.edu/news/rush-among-us-news-top-hospitals-seventh-straight-year,"Rush hospital-specific clinical programs, August 2026",2026-09-28,
+140119,specialty,Diabetes and Endocrinology,https://www.rush.edu/news/rush-among-us-news-top-hospitals-seventh-straight-year,"Rush hospital-specific clinical programs, August 2026",2026-09-28,
+140119,specialty,Geriatrics,https://www.rush.edu/news/rush-among-us-news-top-hospitals-seventh-straight-year,"Rush hospital-specific clinical programs, August 2026",2026-09-28,
+140119,specialty,Gynecology,https://www.rush.edu/news/rush-among-us-news-top-hospitals-seventh-straight-year,"Rush hospital-specific clinical programs, August 2026",2026-09-28,
+140119,specialty,Gastroenterology and GI Surgery,https://www.rush.edu/news/rush-among-us-news-top-hospitals-seventh-straight-year,"Rush hospital-specific clinical programs, August 2026",2026-09-28,
+140119,specialty,Pulmonology and Lung Surgery,https://www.rush.edu/news/rush-among-us-news-top-hospitals-seventh-straight-year,"Rush hospital-specific clinical programs, August 2026",2026-09-28,
+140119,specialty,Cancer,https://www.rush.edu/news/rush-among-us-news-top-hospitals-seventh-straight-year,"Rush hospital-specific clinical programs, August 2026",2026-09-28,

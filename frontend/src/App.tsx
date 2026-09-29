@@ -1,6 +1,7 @@
 import { lazy, Suspense } from "react";
 import { Route, Routes } from "react-router-dom";
 import Navbar from "./components/Navbar";
+import SessionPreferences from "./components/SessionPreferences";
 
 const LandingPage = lazy(() => import("./pages/LandingPage"));
 const SearchPage = lazy(() => import("./pages/SearchPage"));
@@ -26,6 +27,7 @@ export default function App() {
   return (
     <div className="flex min-h-screen flex-col">
       <Navbar />
+      <SessionPreferences />
       <main className="flex-1">
         <Suspense fallback={<AppLoader />}>
           <Routes>

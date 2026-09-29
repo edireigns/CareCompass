@@ -57,6 +57,7 @@ class Hospital(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
+    cms_presence = relationship("HospitalPresence", uselist=False, lazy="joined")
     location = relationship("Location", back_populates="hospital", uselist=False)
     quality = relationship("HospitalQuality", back_populates="hospital", uselist=False)
     outcomes = relationship("HospitalOutcomes", back_populates="hospital", uselist=False)

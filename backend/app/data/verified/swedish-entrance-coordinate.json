@@ -1,0 +1,10 @@
+{
+  "facility_id": "140114",
+  "original_address": "5145 N CALIFORNIA AVE",
+  "entrance_address": "5140 N. California Ave.",
+  "latitude": 41.9752362,
+  "longitude": -87.7017257,
+  "source_url": "https://www.endeavorhealth.org/locations/swedish-hospital",
+  "checked_on": "2026-09-29",
+  "note": "Official hospital JSON-LD entrance point. Hospital page connects CMS main building at 5145 with public entrance at 5140 by bridge. Approximate campus distance; not routing or emergency-entrance guidance."
+}

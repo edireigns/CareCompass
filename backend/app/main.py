@@ -12,7 +12,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.config import get_settings
 from app.api.routes import (
-    search, nearby, hospital, compare, recommend, specialties, insurance, rankings,ai,
+    search, nearby, hospital, compare, recommend, specialties, insurance, rankings,ai,data,
 )
 
 logging.basicConfig(level=logging.INFO)
@@ -43,6 +43,7 @@ app.include_router(specialties.router, prefix=settings.api_v1_prefix)
 app.include_router(insurance.router, prefix=settings.api_v1_prefix)
 app.include_router(rankings.router, prefix=settings.api_v1_prefix)
 app.include_router(ai.router, prefix=settings.api_v1_prefix)
+app.include_router(data.router, prefix=settings.api_v1_prefix)
 
 @app.get("/health", tags=["meta"])
 def health_check():
@@ -51,4 +52,8 @@ def health_check():
 
 @app.on_event("startup")
 def on_startup():
+    # Add provenance tables without replacing the recovered hospital database.
+    from app.db.session import Base, engine
+    from app.models.data import HospitalMeasure, DirectoryEntry, ImportRun, HospitalPresence, ReviewEvent
+    Base.metadata.create_all(bind=engine, tables=[HospitalMeasure.__table__, DirectoryEntry.__table__, ImportRun.__table__, HospitalPresence.__table__, ReviewEvent.__table__])
     logger.info("%s starting in %s mode", settings.app_name, settings.app_env)

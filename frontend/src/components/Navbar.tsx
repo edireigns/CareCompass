@@ -7,6 +7,7 @@ const links = [
   { to: "/compare", label: "Compare" },
   { to: "/assistant", label: "AI assistant" },
   { to: "/analytics", label: "Insights" },
+  { to: "/admin", label: "Data Refresh" },
 ];
 
 export default function Navbar() {

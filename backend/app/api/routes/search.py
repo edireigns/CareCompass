@@ -1,3 +1,4 @@
+from app.api.ranking_context import RankingContext, ranking_context
 """GET /search — hospital search by city, ZIP, specialty, and filters."""
 from typing import Optional
 from fastapi import APIRouter, Depends, Query
@@ -16,18 +17,19 @@ def search_hospitals(
     city: Optional[str] = None,
     zip_code: Optional[str] = Query(None, alias="zip"),
     specialty: Optional[str] = None,
+    insurance: Optional[str] = None,
+    carrier: Optional[str] = None,
     emergency_only: bool = False,
     trauma_level: Optional[str] = None,
     teaching_only: bool = False,
     pediatric_only: bool = False,
-    lat: Optional[float] = None,
-    lon: Optional[float] = None,
+    context: RankingContext = Depends(ranking_context),
     db: Session = Depends(get_db),
 ):
     service = HospitalService(HospitalRepository(db))
     return service.search(
-        city=city, zip_code=zip_code, specialty=specialty,
+        city=city, zip_code=zip_code, specialty=specialty, insurance=insurance, carrier=carrier,
         emergency_only=emergency_only, trauma_level=trauma_level,
         teaching_only=teaching_only, pediatric_only=pediatric_only,
-        user_lat=lat, user_lon=lon,
+        user_lat=context.lat, user_lon=context.lon, weights=context.weights,
     )

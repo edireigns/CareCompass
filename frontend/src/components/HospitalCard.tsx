@@ -1,3 +1,5 @@
+import ScoreBreakdown from "./ScoreBreakdown";
+import { usePreferences } from "@/context/Preferences";
 import { Link } from "react-router-dom";
 import type { HospitalSummary } from "@/types/hospital";
 
@@ -25,7 +27,7 @@ function ScoreBadge({
     <span
       className={`${tone} rounded-full px-3 py-1 text-sm font-semibold text-white`}
     >
-      {score.toFixed(0)}
+      {score.toFixed(1)}
     </span>
   );
 }
@@ -35,10 +37,13 @@ export default function HospitalCard({
 }: {
   hospital: HospitalSummary;
 }) {
+  const {preferences,toggleCompared}=usePreferences();
+  const selected=preferences.compared.some(h=>h.id===hospital.id);
   const city = hospital.location?.city;
   const state = hospital.location?.state;
 
   return (
+    <div className="space-y-2">
     <Link
       to={`/hospital/${hospital.id}`}
       className="block rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
@@ -63,6 +68,7 @@ export default function HospitalCard({
             {hospital.hospital_type || "Hospital type unavailable"}
           </p>
 
+          {hospital.cms_presence?.present === false && <p className="mt-2 text-sm text-amber-800">Not listed in latest imported CMS directory. Operating status unconfirmed.</p>}
           <div className="mt-3 flex flex-wrap gap-2 text-xs">
             {hospital.emergency_services && (
               <span className="rounded-full bg-emerald-100 px-2.5 py-1 font-medium text-emerald-800">
@@ -99,5 +105,8 @@ export default function HospitalCard({
         <ScoreBadge score={hospital.overall_score} />
       </div>
     </Link>
+    <ScoreBreakdown hospital={hospital} />
+    <button className="text-sm text-compass-700 underline disabled:opacity-50" disabled={!selected && preferences.compared.length>=5} onClick={()=>toggleCompared({id:hospital.id,name:hospital.name})}>{selected?"Remove from comparison":"Add to comparison"}</button>
+    </div>
   );
 }

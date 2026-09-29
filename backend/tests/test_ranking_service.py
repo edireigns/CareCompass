@@ -31,11 +31,11 @@ def test_shorter_wait_time_increases_score():
     assert fast > slow
 
 
-def test_score_missing_data_defaults_neutral():
+def test_score_missing_data_is_unscored():
     h = Hospital(name="No Data Hospital")
     weights = RankingWeights()
     score = compute_overall_score(h, weights, distance_miles=None)
-    assert 0 <= score <= 100
+    assert score is None
 
 
 def test_custom_weights_change_ranking_order():

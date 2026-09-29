@@ -1,3 +1,4 @@
+from app.api.ranking_context import RankingContext, ranking_context
 """GET /hospital/{id} — full detail page data for one hospital."""
 from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException
@@ -14,12 +15,11 @@ router = APIRouter(tags=["hospital"])
 @router.get("/hospital/{hospital_id}", response_model=HospitalDetail)
 def get_hospital(
     hospital_id: str,
-    lat: Optional[float] = None,
-    lon: Optional[float] = None,
+    context: RankingContext = Depends(ranking_context),
     db: Session = Depends(get_db),
 ):
     service = HospitalService(HospitalRepository(db))
-    detail = service.get_detail(hospital_id, user_lat=lat, user_lon=lon)
+    detail = service.get_detail(hospital_id, weights=context.weights, user_lat=context.lat, user_lon=context.lon)
     if not detail:
         raise HTTPException(status_code=404, detail="Hospital not found")
     return detail

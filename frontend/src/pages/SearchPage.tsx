@@ -1,141 +1,66 @@
-import { FormEvent, useMemo, useState } from "react";
+import CoveragePanel from "@/components/CoveragePanel";
+import { usePreferences, EMPTY_SEARCH } from "@/context/Preferences";
+import { useEffect, type FormEvent } from "react";
 import { useSearchParams } from "react-router-dom";
-import { useHospitalSearch } from "@/hooks/useHospitals";
+import { useQuery } from "@tanstack/react-query";
+import { apiClient } from "@/api/client";
+import { useHospitalSearch, useNearby } from "@/hooks/useHospitals";
 import HospitalCard from "@/components/HospitalCard";
+import LocationInput from "@/components/LocationInput";
 
 export default function SearchPage() {
-  const [searchParams] = useSearchParams();
-  const initialQuery = searchParams.get("q") ?? "";
-  const [city, setCity] = useState(initialQuery.match(/^\d{5}$/) ? "" : initialQuery);
-  const [zip, setZip] = useState(initialQuery.match(/^\d{5}$/) ? initialQuery : "");
-  const [emergencyOnly, setEmergencyOnly] = useState(false);
-  const [submitted, setSubmitted] = useState(Boolean(initialQuery));
-
-  const params = useMemo(
-    () => ({
-      city: submitted && city.trim() ? city.trim() : undefined,
-      zip: submitted && zip.trim() ? zip.trim() : undefined,
-      emergency_only: submitted && emergencyOnly ? true : undefined,
-    }),
-    [city, zip, emergencyOnly, submitted],
-  );
-
-  const { data: hospitals, isLoading, isError } = useHospitalSearch(params);
-
-  function handleSubmit(event: FormEvent) {
-    event.preventDefault();
-    setSubmitted(true);
-  }
-
-  function clearFilters() {
-    setCity("");
-    setZip("");
-    setEmergencyOnly(false);
-    setSubmitted(false);
-  }
-
-  return (
-    <div className="min-h-full bg-slate-50">
-      <section className="border-b border-slate-200 bg-white">
-        <div className="mx-auto max-w-7xl px-5 py-10 lg:px-8">
-          <p className="section-kicker">Hospital directory</p>
-          <h1 className="mt-2 font-display text-4xl text-compass-950">Find hospitals that match your needs.</h1>
-          <p className="mt-3 max-w-2xl text-slate-600">
-            Search by location and narrow results using emergency-service availability.
-          </p>
-        </div>
+  const [url] = useSearchParams(); const initial = url.get("q") || "";
+  const {preferences:{search:filters,point},setSearch,setPoint}=usePreferences();
+  const {city,zip,specialty,insurance,carrier,emergency,mode,radius,submitted,params}=filters;
+  useEffect(()=>{ if (initial && initial!==filters.initialQuery) {
+    const isZip=/^\d{5}$/.test(initial);
+    const params={city:isZip?undefined:initial,zip:isZip?initial:undefined};
+    setSearch({...EMPTY_SEARCH,initialQuery:initial,city:params.city||'',zip:params.zip||'',submitted:true,params});
+  } },[initial]);
+  const setCity=(city:string)=>setSearch({city}); const setZip=(zip:string)=>setSearch({zip});
+  const setSpecialty=(specialty:string)=>setSearch({specialty}); const setInsurance=(insurance:string)=>setSearch({insurance});
+  const setEmergency=(emergency:boolean)=>setSearch({emergency}); const setMode=(mode:string)=>setSearch({mode});
+  const setRadius=(radius:number)=>setSearch({radius});
+  const directory = useHospitalSearch(params, submitted && mode === "directory");
+  const nearby = useNearby(mode === "nearby" ? point : undefined, radius);
+  const query = mode === "nearby" ? nearby : directory;
+  const results = mode === "nearby" ? (point ? (emergency ? query.data?.filter(h => h.emergency_services) : query.data) : undefined) : (submitted ? query.data : undefined);
+  const { data: specialties = [] } = useQuery({ queryKey: ["specialties"], queryFn: async () => (await apiClient.get<string[]>("/specialties")).data });
+  const { data: plans = [] } = useQuery({ queryKey: ["insurance"], queryFn: async () => (await apiClient.get<string[]>("/insurance")).data });
+  const {data: categories=[]}=useQuery({queryKey:['insurance-categories'],queryFn:async()=>(await apiClient.get<{carrier:string;plans:string[]}[]>('/insurance/categories')).data});
+  const visiblePlans=carrier ? categories.find(c=>c.carrier===carrier)?.plans||[] : plans;
+  function search(e:FormEvent) { e.preventDefault(); setSearch({submitted:true,params:{city:city.trim()||undefined,zip:zip||undefined,specialty:specialty||undefined,insurance:insurance||undefined,carrier:carrier||undefined,emergency_only:emergency||undefined}}); }
+  function clear() { setSearch({...EMPTY_SEARCH}); }
+  return <div className="mx-auto max-w-7xl px-5 py-10">
+    <p className="section-kicker">Hospital directory</p><h1 className="mt-2 font-display text-4xl text-compass-950">Find hospitals that match your needs.</h1>
+    <div className="mt-8 grid gap-8 lg:grid-cols-[300px_1fr]">
+      <aside className="space-y-4">
+        <div className="flex gap-2"><button className={mode === "directory" ? "primary-button" : "secondary-button"} onClick={() => setMode("directory")}>City or ZIP</button><button className={mode === "nearby" ? "primary-button" : "secondary-button"} onClick={() => setMode("nearby")}>Nearby</button></div>
+        {mode === "nearby" ? <><LocationInput point={point} onChange={setPoint} /><label className="block text-sm font-semibold">Search radius<select className="form-input mt-2" value={radius} onChange={e => setRadius(Number(e.target.value))}>{[5,10,25,50,100,200].map(n => <option key={n} value={n}>{n} miles</option>)}</select></label><p className="text-xs text-slate-500">Only hospitals with verified coordinates from Census address matching or official hospital locations are included. Unmatched addresses are excluded, not placed at estimated city centers.</p></> :
+          <form onSubmit={search} className="space-y-4 rounded-2xl border border-slate-200 bg-white p-5">
+            <label className="block text-sm font-semibold">City<input className="form-input mt-2" value={city} onChange={e => setCity(e.target.value)} /></label>
+            <label className="block text-sm font-semibold">ZIP code<input className="form-input mt-2" inputMode="numeric" value={zip} onChange={e => setZip(e.target.value.replace(/\D/g, "").slice(0,5))} /></label>
+            <label className="block text-sm font-semibold">Specialty category<select className="form-input mt-2" value={specialty} onChange={e => setSpecialty(e.target.value)}><option value="">All specialty categories</option>{specialty && !specialties.includes(specialty) && <option value={specialty}>{specialty} (saved source name)</option>}{specialties.map(s => <option key={s}>{s}</option>)}</select></label>
+            <label className="block text-sm font-semibold">Insurance carrier<select className="form-input mt-2" value={carrier} onChange={e=>setSearch({carrier:e.target.value,insurance:''})}><option value="">All carriers</option>{categories.map(c=><option key={c.carrier}>{c.carrier}</option>)}</select></label>
+            <label className="block text-sm font-semibold">Exact verified plan<select className="form-input mt-2" disabled={!plans.length} value={insurance} onChange={e => setInsurance(e.target.value)}><option value="">{plans.length ? "Any plan / unknown" : "No verified plans imported"}</option>{visiblePlans.map(s => <option key={s}>{s}</option>)}</select></label>
+            <p className="text-xs text-slate-500">Carrier groups help you browse; they do not establish coverage for every plan. Exact plan names, networks, tiers and years remain separate. No listed plan means unknown coverage.</p>
+            <label className="flex gap-2 text-sm"><input type="checkbox" checked={emergency} onChange={e => setEmergency(e.target.checked)} />Emergency services only</label>
+            <button className="primary-button w-full" type="submit">Search hospitals</button>
+          </form>}
+        {mode === "nearby" && <label className="flex gap-2 text-sm"><input type="checkbox" checked={emergency} onChange={e => setEmergency(e.target.checked)} />Emergency services only</label>}
+        <button type="button" className="text-sm text-compass-700 underline" onClick={clear}>Clear filters</button>
+      </aside>
+      <section aria-live="polite">
+        {city.trim().toLowerCase()==='chicago' && <CoveragePanel compact />}
+        <h2 className="mb-3 font-display text-2xl text-compass-950">{results ? `${results.length} hospitals found` : "Search results"}</h2>
+        {mode === "directory" && !submitted && <p className="rounded-xl bg-compass-100 p-6">Enter a city or ZIP, select a filter, or search the directory.</p>}
+        {mode === "nearby" && !point && <p className="rounded-xl bg-compass-100 p-6">Set your location to find nearby hospitals.</p>}
+        {query.isFetching && <p className="mb-4 text-compass-700">Loading hospitals…</p>}
+        {query.isError && <p role="alert" className="mb-4 text-rose-700">Hospital results could not be loaded. Please try again.</p>}
+        {results?.length === 0 && <p className="rounded-xl bg-slate-100 p-6">No hospitals matched. Try a larger radius or fewer filters.</p>}
+        {mode === "directory" && results && results.length >= 500 && <p className="mb-4 text-sm text-slate-500">Showing the first 500 matches. Narrow your search to see more specific results.</p>}
+        <div className="grid gap-4 md:grid-cols-2">{results?.map(h => <HospitalCard key={h.id} hospital={h} />)}</div>
       </section>
-
-      <div className="mx-auto grid max-w-7xl gap-8 px-5 py-8 lg:grid-cols-[280px_1fr] lg:px-8">
-        <aside>
-          <form onSubmit={handleSubmit} className="sticky top-24 rounded-2xl border border-slate-200 bg-white p-5 shadow-card">
-            <div className="flex items-center justify-between">
-              <h2 className="font-display text-2xl text-compass-950">Filters</h2>
-              <button type="button" onClick={clearFilters} className="text-sm font-medium text-compass-700 hover:text-compass-950">
-                Clear
-              </button>
-            </div>
-
-            <label className="mt-6 block text-sm font-semibold text-slate-700">
-              City
-              <input
-                value={city}
-                onChange={(event) => setCity(event.target.value)}
-                placeholder="Example: New York"
-                className="form-input mt-2"
-              />
-            </label>
-
-            <label className="mt-5 block text-sm font-semibold text-slate-700">
-              ZIP code
-              <input
-                value={zip}
-                onChange={(event) => setZip(event.target.value.replace(/\D/g, "").slice(0, 5))}
-                placeholder="10001"
-                inputMode="numeric"
-                className="form-input mt-2"
-              />
-            </label>
-
-            <label className="mt-5 flex cursor-pointer items-start gap-3 rounded-xl bg-slate-50 p-4 text-sm text-slate-700">
-              <input
-                type="checkbox"
-                checked={emergencyOnly}
-                onChange={(event) => setEmergencyOnly(event.target.checked)}
-                className="mt-1 h-4 w-4 rounded border-slate-300 text-compass-700 focus:ring-compass-500"
-              />
-              <span>
-                <strong className="block">Emergency services only</strong>
-                <span className="mt-1 block text-xs leading-5 text-slate-500">Show hospitals that report emergency services.</span>
-              </span>
-            </label>
-
-            <button type="submit" className="primary-button mt-6 w-full">Search hospitals</button>
-          </form>
-        </aside>
-
-        <section>
-          <div className="mb-5 flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
-            <div>
-              <p className="text-sm font-semibold uppercase tracking-wider text-compass-500">Results</p>
-              <h2 className="mt-1 font-display text-3xl text-compass-950">
-                {hospitals ? `${hospitals.length} hospitals found` : "Search results"}
-              </h2>
-            </div>
-            <p className="text-sm text-slate-500">Data provided for informational use.</p>
-          </div>
-
-          {!submitted && (
-            <div className="rounded-2xl border border-dashed border-compass-300 bg-compass-100/50 p-10 text-center">
-              <h3 className="font-display text-2xl text-compass-950">Start with a city or ZIP code.</h3>
-              <p className="mx-auto mt-3 max-w-md text-slate-600">Use the filters to search the CMS hospital directory.</p>
-            </div>
-          )}
-
-          {submitted && isLoading && (
-            <div className="grid gap-5 md:grid-cols-2">
-              {[1, 2, 3, 4].map((item) => <div key={item} className="h-64 animate-pulse rounded-2xl bg-slate-200" />)}
-            </div>
-          )}
-
-          {submitted && isError && (
-            <div className="rounded-2xl border border-rose-200 bg-rose-50 p-6 text-rose-800">
-              The hospital service could not be reached. Confirm that the backend is running on port 8000.
-            </div>
-          )}
-
-          {submitted && !isLoading && hospitals?.length === 0 && (
-            <div className="rounded-2xl border border-slate-200 bg-white p-10 text-center shadow-card">
-              <h3 className="font-display text-2xl text-compass-950">No hospitals matched these filters.</h3>
-              <p className="mt-3 text-slate-600">Try a nearby city, a different ZIP code, or remove the emergency-only filter.</p>
-            </div>
-          )}
-
-          <div className="grid gap-5 md:grid-cols-2">
-            {hospitals?.map((hospital) => <HospitalCard key={hospital.id} hospital={hospital} />)}
-          </div>
-        </section>
-      </div>
     </div>
-  );
+  </div>;
 }

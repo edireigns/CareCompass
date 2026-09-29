@@ -2,7 +2,7 @@ import type { RankingWeights } from "@/types/hospital";
 
 const fields: { key: keyof RankingWeights; label: string }[] = [
   { key: "quality", label: "Quality Rating" },
-  { key: "wait_time", label: "Wait Time" },
+  { key: "wait_time", label: "ED visit duration (historical)" },
   { key: "distance", label: "Distance" },
   { key: "satisfaction", label: "Patient Satisfaction" },
   { key: "readmission", label: "Readmission Performance" },
@@ -11,7 +11,9 @@ const fields: { key: keyof RankingWeights; label: string }[] = [
 export default function RankingWeightSliders({
   weights,
   onChange,
+  hasLocation = false,
 }: {
+  hasLocation?: boolean;
   weights: RankingWeights;
   onChange: (w: RankingWeights) => void;
 }) {
@@ -33,6 +35,8 @@ export default function RankingWeightSliders({
           </div>
           <input
             type="range"
+            aria-label={label}
+            disabled={key === "distance" && !hasLocation}
             min={0}
             max={1}
             step={0.05}
@@ -40,6 +44,7 @@ export default function RankingWeightSliders({
             onChange={(e) => onChange({ ...weights, [key]: parseFloat(e.target.value) })}
             className="w-full accent-compass-500"
           />
+          {key === "distance" && !hasLocation && <p className="text-xs text-slate-500">Set a location to include distance.</p>}
         </div>
       ))}
     </div>

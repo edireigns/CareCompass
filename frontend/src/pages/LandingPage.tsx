@@ -55,7 +55,7 @@ export default function LandingPage() {
             </form>
 
             <div className="mt-6 flex flex-wrap gap-x-6 gap-y-2 text-sm text-compass-100">
-              <span>5,432 hospitals</span>
+              <span>5,000+ hospitals</span>
               <span>CMS quality data</span>
               <span>Free public access</span>
             </div>

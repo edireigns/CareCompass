@@ -1,14 +1,16 @@
 import type { HospitalDetail } from "@/types/hospital";
 
 const rows: { label: string; get: (h: HospitalDetail) => string | number }[] = [
-  { label: "Overall Score", get: (h) => h.overall_score?.toFixed(0) ?? "—" },
+  { label: "Overall Score", get: (h) => h.overall_score?.toFixed(1) ?? "Not enough data" },
+  { label: "Score reporting dates", get: h=>h.score_freshness?.summary || "Unknown" },
+  { label: "Weighted data coverage", get: h=>h.score_explanation ? `${h.score_explanation.coverage_pct}%${h.score_explanation.sufficient_data?'':' (limited data)'}` : 'Unknown' },
   { label: "CMS Overall Rating", get: (h) => (h.quality?.cms_overall_rating ? `${h.quality.cms_overall_rating} / 5` : "—") },
-  { label: "Patient Satisfaction", get: (h) => (h.experience?.overall_satisfaction ? `${h.experience.overall_satisfaction}%` : "—") },
-  { label: "Readmission Rate", get: (h) => (h.outcomes?.readmission_rate ? `${h.outcomes.readmission_rate}%` : "—") },
-  { label: "Mortality Rate", get: (h) => (h.outcomes?.mortality_rate ? `${h.outcomes.mortality_rate}%` : "—") },
-  { label: "Infection Rate", get: (h) => (h.outcomes?.infection_rate ? `${h.outcomes.infection_rate}` : "—") },
-  { label: "ER Wait Time", get: (h) => (h.wait_time?.er_wait_minutes ? `${h.wait_time.er_wait_minutes} min` : "—") },
-  { label: "Distance", get: (h) => (h.distance_miles !== undefined ? `${h.distance_miles} mi` : "—") },
+  { label: "Patient Satisfaction", get: (h) => (h.experience?.overall_satisfaction != null ? `${h.experience.overall_satisfaction}%` : "—") },
+  { label: "Hospital-wide readmission rate", get: (h) => (h.outcomes?.readmission_rate != null ? `${h.outcomes.readmission_rate}%` : "—") },
+  { label: "Hospital-wide mortality rate", get: (h) => (h.outcomes?.mortality_rate != null ? `${h.outcomes.mortality_rate}%` : "—") },
+  { label: "Hip/knee replacement complications", get: (h) => (h.outcomes?.complication_rate != null ? `${h.outcomes.complication_rate}%` : "—") },
+  { label: "ED duration (historical median)", get: (h) => (h.wait_time?.er_wait_minutes != null ? `${h.wait_time.er_wait_minutes} min` : "—") },
+  { label: "Distance", get: (h) => (h.distance_miles != null ? `${h.distance_miles} mi` : "—") },
 ];
 
 export default function ComparisonTable({ hospitals }: { hospitals: HospitalDetail[] }) {
