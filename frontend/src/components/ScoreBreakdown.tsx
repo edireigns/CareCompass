@@ -2,7 +2,7 @@ import type { HospitalSummary } from '@/types/hospital';
 export default function ScoreBreakdown({hospital}:{hospital:HospitalSummary}) {
   const info=hospital.score_explanation;
   if (!info) return null;
-  return <div className="space-y-2"><p className="text-xs text-amber-900">{hospital.score_freshness?.summary || "Score reporting dates unavailable"}</p><details className="rounded-xl border border-slate-200 bg-white p-4 text-sm">
+  return <div className="space-y-2"><p className="text-xs leading-5 text-[#6c7180]">{hospital.score_freshness?.summary || "Score reporting dates unavailable"}</p><details className="rounded-xl border border-[#dce6ed] bg-[#f8fbfc] p-3 text-sm open:bg-white">
     <summary className="cursor-pointer font-semibold text-compass-950">{info.coverage_pct}% weighted data coverage · {info.overall_score==null?'Not enough data':info.sufficient_data?'Score explained':'Limited data — score explained'}</summary>
     <p className="mt-3 text-slate-600">Coverage is the share of your selected priorities with available data, not a quality rating. Missing measures are excluded; the remaining weights are rescaled to 100%. Hospitals below 50% coverage follow better-documented hospitals in score-sorted lists. Nearby results remain sorted by distance.</p>
     <div className="mt-3 space-y-3">{info.components.map(c=><div key={c.key} className="border-t border-slate-100 pt-3">

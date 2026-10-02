@@ -31,35 +31,37 @@ export default function SearchPage() {
   const visiblePlans=carrier ? categories.find(c=>c.carrier===carrier)?.plans||[] : plans;
   function search(e:FormEvent) { e.preventDefault(); setSearch({submitted:true,params:{city:city.trim()||undefined,zip:zip||undefined,specialty:specialty||undefined,insurance:insurance||undefined,carrier:carrier||undefined,emergency_only:emergency||undefined}}); }
   function clear() { setSearch({...EMPTY_SEARCH}); }
-  return <div className="mx-auto max-w-7xl px-5 py-10">
-    <p className="section-kicker">Hospital directory</p><h1 className="mt-2 font-display text-4xl text-compass-950">Find hospitals that match your needs.</h1>
-    <div className="mt-8 grid gap-8 lg:grid-cols-[300px_1fr]">
+  return <div className="page-shell">
+    <p className="section-kicker">Hospital directory</p><h1 className="page-title mt-2">Find care near you.</h1>
+    <p className="page-intro">Search hospitals using public data, then open a profile to see the measures, sources, and reporting dates behind each result.</p>
+    <div className="mt-9 grid items-start gap-8 lg:grid-cols-[310px_minmax(0,1fr)]">
       <aside className="space-y-4">
-        <div className="flex gap-2"><button className={mode === "directory" ? "primary-button" : "secondary-button"} onClick={() => setMode("directory")}>City or ZIP</button><button className={mode === "nearby" ? "primary-button" : "secondary-button"} onClick={() => setMode("nearby")}>Nearby</button></div>
+        <div className="flex gap-2 rounded-2xl border border-[#dce6ed] bg-white p-1.5 shadow-card"><button type="button" className={`flex-1 ${mode === "directory" ? "primary-button" : "secondary-button border-transparent shadow-none"}`} onClick={() => setMode("directory")}>City or ZIP</button><button type="button" className={`flex-1 ${mode === "nearby" ? "primary-button" : "secondary-button border-transparent shadow-none"}`} onClick={() => setMode("nearby")}>Nearby</button></div>
         {mode === "nearby" ? <><LocationInput point={point} onChange={setPoint} /><label className="block text-sm font-semibold">Search radius<select className="form-input mt-2" value={radius} onChange={e => setRadius(Number(e.target.value))}>{[5,10,25,50,100,200].map(n => <option key={n} value={n}>{n} miles</option>)}</select></label><p className="text-xs text-slate-500">Only hospitals with verified coordinates from Census address matching or official hospital locations are included. Unmatched addresses are excluded, not placed at estimated city centers.</p></> :
-          <form onSubmit={search} className="space-y-4 rounded-2xl border border-slate-200 bg-white p-5">
+          <form onSubmit={search} className="surface-card space-y-4 p-5 sm:p-6">
+            <div><p className="section-kicker">Refine your search</p><h2 className="mt-1 font-display text-xl text-compass-950">Filters</h2></div>
             <label className="block text-sm font-semibold">City<input className="form-input mt-2" value={city} onChange={e => setCity(e.target.value)} /></label>
             <label className="block text-sm font-semibold">ZIP code<input className="form-input mt-2" inputMode="numeric" value={zip} onChange={e => setZip(e.target.value.replace(/\D/g, "").slice(0,5))} /></label>
             <label className="block text-sm font-semibold">Specialty category<select className="form-input mt-2" value={specialty} onChange={e => setSpecialty(e.target.value)}><option value="">All specialty categories</option>{specialty && !specialties.includes(specialty) && <option value={specialty}>{specialty} (saved source name)</option>}{specialties.map(s => <option key={s}>{s}</option>)}</select></label>
             <label className="block text-sm font-semibold">Insurance carrier<select className="form-input mt-2" value={carrier} onChange={e=>setSearch({carrier:e.target.value,insurance:''})}><option value="">All carriers</option>{categories.map(c=><option key={c.carrier}>{c.carrier}</option>)}</select></label>
             <label className="block text-sm font-semibold">Exact verified plan<select className="form-input mt-2" disabled={!plans.length} value={insurance} onChange={e => setInsurance(e.target.value)}><option value="">{plans.length ? "Any plan / unknown" : "No verified plans imported"}</option>{visiblePlans.map(s => <option key={s}>{s}</option>)}</select></label>
             <p className="text-xs text-slate-500">Carrier groups help you browse; they do not establish coverage for every plan. Exact plan names, networks, tiers and years remain separate. No listed plan means unknown coverage.</p>
-            <label className="flex gap-2 text-sm"><input type="checkbox" checked={emergency} onChange={e => setEmergency(e.target.checked)} />Emergency services only</label>
+            <label className="flex items-center gap-3 rounded-xl bg-[#f5f9fb] p-3 text-sm font-semibold text-compass-950"><input type="checkbox" className="h-4 w-4 accent-compass-700" checked={emergency} onChange={e => setEmergency(e.target.checked)} />Emergency services only</label>
             <button className="primary-button w-full" type="submit">Search hospitals</button>
           </form>}
         {mode === "nearby" && <label className="flex gap-2 text-sm"><input type="checkbox" checked={emergency} onChange={e => setEmergency(e.target.checked)} />Emergency services only</label>}
-        <button type="button" className="text-sm text-compass-700 underline" onClick={clear}>Clear filters</button>
+        <button type="button" className="px-2 text-sm font-semibold text-compass-700 hover:underline" onClick={clear}>Clear filters</button>
       </aside>
-      <section aria-live="polite">
+      <section aria-live="polite" className="min-w-0">
         {city.trim().toLowerCase()==='chicago' && <CoveragePanel compact />}
-        <h2 className="mb-3 font-display text-2xl text-compass-950">{results ? `${results.length} hospitals found` : "Search results"}</h2>
-        {mode === "directory" && !submitted && <p className="rounded-xl bg-compass-100 p-6">Enter a city or ZIP, select a filter, or search the directory.</p>}
-        {mode === "nearby" && !point && <p className="rounded-xl bg-compass-100 p-6">Set your location to find nearby hospitals.</p>}
+        <div className="mb-5 flex flex-wrap items-end justify-between gap-3"><div><p className="section-kicker">Explore the directory</p><h2 className="mt-1 font-display text-2xl text-compass-950">{results ? `${results.length} hospitals found` : "Search results"}</h2></div>{results && <span className="text-xs text-[#617986]">Select a hospital to inspect its data</span>}</div>
+        {mode === "directory" && !submitted && <p className="surface-card p-6 text-sm text-[#526b79]">Enter a city or ZIP, select a filter, or search the directory.</p>}
+        {mode === "nearby" && !point && <p className="surface-card p-6 text-sm text-[#526b79]">Set your location to find nearby hospitals.</p>}
         {query.isFetching && <p className="mb-4 text-compass-700">Loading hospitals…</p>}
         {query.isError && <p role="alert" className="mb-4 text-rose-700">Hospital results could not be loaded. Please try again.</p>}
-        {results?.length === 0 && <p className="rounded-xl bg-slate-100 p-6">No hospitals matched. Try a larger radius or fewer filters.</p>}
+        {results?.length === 0 && <p className="surface-card p-6 text-sm text-[#526b79]">No hospitals matched. Try a larger radius or fewer filters.</p>}
         {mode === "directory" && results && results.length >= 500 && <p className="mb-4 text-sm text-slate-500">Showing the first 500 matches. Narrow your search to see more specific results.</p>}
-        <div className="grid gap-4 md:grid-cols-2">{results?.map(h => <HospitalCard key={h.id} hospital={h} />)}</div>
+        <div className="grid gap-5 xl:grid-cols-2">{results?.map(h => <HospitalCard key={h.id} hospital={h} />)}</div>
       </section>
     </div>
   </div>;

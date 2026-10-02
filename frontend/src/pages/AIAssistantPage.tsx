@@ -35,19 +35,20 @@ export default function AIAssistantPage() {
   }
 
   return (
-    <div className="mx-auto max-w-3xl px-6 py-10">
-      <h1 className="font-display text-2xl text-compass-950">
+    <div className="page-shell max-w-4xl">
+      <p className="section-kicker">Grounded in public data</p>
+      <h1 className="page-title mt-2">
         Ask CareCompass
       </h1>
 
-      <p className="mb-6 mt-2 text-sm text-compass-700">
+      <p className="page-intro mb-8">
         Ask questions about hospitals and receive explanations grounded in
         public CMS quality data.
       </p>
 
       <form
         onSubmit={handleSubmit}
-        className="mb-8 space-y-5 rounded-2xl border border-slate-200 bg-white p-6 shadow-card"
+        className="surface-card mb-8 space-y-5 p-6 sm:p-8"
       >
         <div>
           <label

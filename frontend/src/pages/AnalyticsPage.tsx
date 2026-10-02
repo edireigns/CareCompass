@@ -10,9 +10,9 @@ export default function AnalyticsPage() {
   }));
 
   return (
-    <div className="max-w-5xl mx-auto px-6 py-10">
-      <h1 className="font-display text-2xl text-compass-950 mb-6">Analytics dashboard</h1>
-      <div className="bg-white rounded-xl border border-compass-100 p-5">
+    <div className="page-shell max-w-6xl">
+      <p className="section-kicker">At a glance</p><h1 className="page-title mb-8 mt-2">Hospital insights.</h1>
+      <div className="surface-card p-5 sm:p-7">
         <h2 className="text-sm font-semibold text-compass-950 mb-4">Overall score by hospital</h2>
         {isLoading ? (
           <p className="text-compass-700">Loading…</p>

@@ -15,22 +15,22 @@ const rows: { label: string; get: (h: HospitalDetail) => string | number }[] = [
 
 export default function ComparisonTable({ hospitals }: { hospitals: HospitalDetail[] }) {
   return (
-    <div className="overflow-x-auto rounded-xl border border-compass-100">
+    <div className="surface-card overflow-x-auto">
       <table className="min-w-full bg-white text-sm">
         <thead>
-          <tr className="bg-compass-100 text-compass-950">
-            <th className="text-left px-4 py-3 font-semibold">Metric</th>
+          <tr className="bg-compass-950 text-white">
+            <th scope="col" className="min-w-44 text-left px-5 py-4 font-semibold">Metric</th>
             {hospitals.map((h) => (
-              <th key={h.id} className="text-left px-4 py-3 font-semibold">{h.name}</th>
+              <th scope="col" key={h.id} className="min-w-52 text-left px-5 py-4 font-semibold">{h.name}</th>
             ))}
           </tr>
         </thead>
         <tbody>
           {rows.map((row) => (
-            <tr key={row.label} className="border-t border-compass-100">
-              <td className="px-4 py-3 text-compass-700">{row.label}</td>
+            <tr key={row.label} className="border-t border-[#e5edf1] even:bg-[#f8fbfc]">
+              <th scope="row" className="px-5 py-4 text-left font-semibold text-compass-900">{row.label}</th>
               {hospitals.map((h) => (
-                <td key={h.id} className="px-4 py-3">{row.get(h)}</td>
+                <td key={h.id} className="px-5 py-4 text-[#4b6473]">{row.get(h)}</td>
               ))}
             </tr>
           ))}

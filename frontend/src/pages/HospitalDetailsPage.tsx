@@ -40,7 +40,7 @@ function PerformanceGroup({
   );
 
   return (
-    <article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-card">
+    <article className="surface-card p-5">
       <h3 className="font-display text-xl text-compass-950">{title}</h3>
 
       {!hasData ? (
@@ -130,20 +130,20 @@ export default function HospitalDetailsPage() {
     .join(", ");
 
   return (
-    <main className="min-h-full bg-slate-50">
-      <section className="border-b border-slate-200 bg-white">
-        <div className="mx-auto max-w-6xl px-6 py-10">
+    <div className="min-h-full bg-[#f6f8fb]">
+      <section className="border-b border-[#dce6ed] bg-[#edf5f8]">
+        <div className="mx-auto max-w-6xl px-5 py-10 sm:py-14 lg:px-8">
           <div className="flex flex-col justify-between gap-6 lg:flex-row lg:items-start">
             <div>
-              <p className="text-sm font-semibold uppercase tracking-wider text-compass-500">
+              <p className="section-kicker">
                 Hospital profile
               </p>
 
-              <h1 className="mt-2 font-display text-4xl text-compass-950">
+              <h1 className="page-title mt-2 max-w-2xl">
                 {hospital.name}
               </h1>
 
-              <p className="mt-3 text-slate-600">
+              <p className="mt-3 text-[#536b7a]">
                 {address || "Location not reported"}
               </p>
 
@@ -174,8 +174,8 @@ export default function HospitalDetailsPage() {
               </div>
             </div>
 
-            <div className="grid min-w-full grid-cols-2 gap-3 sm:min-w-[360px]">
-              <div className="rounded-2xl bg-compass-950 p-5 text-white">
+            <div className="grid min-w-0 grid-cols-2 gap-3 sm:min-w-[360px]">
+              <div className="rounded-2xl bg-compass-950 p-4 text-white shadow-card sm:p-5">
                 <p className="text-sm text-compass-100">CareCompass Score</p>
                 <p className="mt-2 text-4xl font-bold">
                   {hospital.overall_score?.toFixed(1) ?? "N/A"}
@@ -183,7 +183,7 @@ export default function HospitalDetailsPage() {
                 <p className="mt-1 text-xs text-compass-200">Out of 100</p>
               </div>
 
-              <div className="rounded-2xl border border-slate-200 bg-white p-5">
+              <div className="rounded-2xl border border-[#dce6ed] bg-white p-4 shadow-card sm:p-5">
                 <p className="text-sm text-slate-500">CMS Overall Rating</p>
                 <p className="mt-2 text-4xl font-bold text-compass-950">
                   {hospital.quality?.cms_overall_rating ?? "N/A"}
@@ -195,7 +195,7 @@ export default function HospitalDetailsPage() {
         </div>
       </section>
 
-      <div className="mx-auto max-w-6xl space-y-8 px-6 py-8">
+      <div className="mx-auto max-w-6xl space-y-8 px-5 py-10 lg:px-8">
         <button className="secondary-button disabled:opacity-50" disabled={!preferences.compared.some(h=>h.id===hospital.id)&&preferences.compared.length>=5} onClick={()=>toggleCompared({id:hospital.id,name:hospital.name})}>{preferences.compared.some(h=>h.id===hospital.id)?'Remove from comparison':'Add to comparison'}</button>
         <ScoreBreakdown hospital={hospital} />
         <section>
@@ -203,7 +203,7 @@ export default function HospitalDetailsPage() {
             Hospital information
           </h2>
 
-          <dl className="mt-4 grid gap-x-8 rounded-2xl border border-slate-200 bg-white px-5 shadow-card md:grid-cols-2">
+          <dl className="surface-card mt-4 grid gap-x-8 px-5 md:grid-cols-2">
             <MetricRow
               label="CMS Facility ID"
               value={hospital.cms_provider_id || "Not reported"}
@@ -275,7 +275,7 @@ export default function HospitalDetailsPage() {
         </section>
 
         <div className="grid gap-6 lg:grid-cols-2">
-          <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-card">
+          <section className="surface-card p-5">
             <h2 className="font-display text-2xl text-compass-950">
               Clinical outcomes
             </h2>
@@ -306,7 +306,7 @@ export default function HospitalDetailsPage() {
             </dl>
           </section>
 
-          <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-card">
+          <section className="surface-card p-5">
             <h2 className="font-display text-2xl text-compass-950">
               Patient experience
             </h2>
@@ -397,6 +397,6 @@ export default function HospitalDetailsPage() {
           hospital to confirm current services and insurance coverage.
         </p>
       </div>
-    </main>
+    </div>
   );
 }

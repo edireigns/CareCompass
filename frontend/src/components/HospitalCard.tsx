@@ -10,24 +10,20 @@ function ScoreBadge({
 }) {
   if (score == null || !Number.isFinite(score)) {
     return (
-      <span className="rounded-full bg-slate-100 px-3 py-1 text-sm font-semibold text-slate-600">
-        Not rated
+      <span className="flex min-w-20 flex-col items-center rounded-xl bg-[#f2f5f7] px-3 py-2 text-center text-xs font-semibold text-[#607786]">
+        <span className="text-sm">No score</span>
       </span>
     );
   }
 
-  const tone =
-    score >= 75
-      ? "bg-emerald-600"
-      : score >= 50
-        ? "bg-amber-500"
-        : "bg-slate-500";
+  const tone = score >= 75 ? "bg-emerald-50 text-emerald-800" : score >= 50 ? "bg-compass-100 text-compass-900" : "bg-amber-50 text-amber-900";
 
   return (
     <span
-      className={`${tone} rounded-full px-3 py-1 text-sm font-semibold text-white`}
+      className={`${tone} flex min-w-20 flex-col items-center rounded-xl px-3 py-2 text-center`}
     >
-      {score.toFixed(1)}
+      <strong className="text-xl leading-none">{score.toFixed(1)}</strong>
+      <small className="mt-1 text-[10px] font-bold uppercase tracking-wider">Score</small>
     </span>
   );
 }
@@ -43,18 +39,18 @@ export default function HospitalCard({
   const state = hospital.location?.state;
 
   return (
-    <div className="space-y-2">
+    <article className="surface-card overflow-hidden transition duration-200 hover:-translate-y-0.5 hover:shadow-card-hover">
     <Link
       to={`/hospital/${hospital.id}`}
-      className="block rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
+      className="group block p-5 sm:p-6"
     >
       <div className="flex items-start justify-between gap-4">
         <div className="min-w-0">
-          <h3 className="text-lg font-semibold text-slate-950">
+          <h3 className="text-lg font-bold leading-snug text-compass-950 transition-colors group-hover:text-compass-700">
             {hospital.name}
           </h3>
 
-          <p className="mt-1 text-sm text-slate-600">
+          <p className="mt-2 text-sm text-[#526b79]">
             {city || state
               ? `${city ?? ""}${city && state ? ", " : ""}${state ?? ""}`
               : "Location unavailable"}
@@ -64,38 +60,38 @@ export default function HospitalCard({
               ` · ${hospital.distance_miles.toFixed(1)} miles away`}
           </p>
 
-          <p className="mt-2 text-sm text-slate-500">
+          <p className="mt-2 text-xs font-medium text-[#6b8290]">
             {hospital.hospital_type || "Hospital type unavailable"}
           </p>
 
           {hospital.cms_presence?.present === false && <p className="mt-2 text-sm text-amber-800">Not listed in latest imported CMS directory. Operating status unconfirmed.</p>}
-          <div className="mt-3 flex flex-wrap gap-2 text-xs">
+          <div className="mt-4 flex flex-wrap gap-2 text-xs">
             {hospital.emergency_services && (
-              <span className="rounded-full bg-emerald-100 px-2.5 py-1 font-medium text-emerald-800">
+              <span className="care-badge care-badge-positive">
                 Emergency services
               </span>
             )}
 
             {hospital.trauma_level && (
-              <span className="rounded-full bg-slate-100 px-2.5 py-1 text-slate-700">
+              <span className="care-badge">
                 Trauma {hospital.trauma_level}
               </span>
             )}
 
             {hospital.teaching_hospital && (
-              <span className="rounded-full bg-blue-100 px-2.5 py-1 text-blue-800">
+              <span className="care-badge">
                 Teaching
               </span>
             )}
 
             {hospital.pediatric_hospital && (
-              <span className="rounded-full bg-purple-100 px-2.5 py-1 text-purple-800">
+              <span className="care-badge">
                 Pediatric
               </span>
             )}
 
             {hospital.quality?.cms_overall_rating != null && (
-              <span className="rounded-full bg-amber-100 px-2.5 py-1 text-amber-800">
+              <span className="care-badge">
                 CMS rating: {hospital.quality.cms_overall_rating}/5
               </span>
             )}
@@ -105,8 +101,10 @@ export default function HospitalCard({
         <ScoreBadge score={hospital.overall_score} />
       </div>
     </Link>
-    <ScoreBreakdown hospital={hospital} />
-    <button className="text-sm text-compass-700 underline disabled:opacity-50" disabled={!selected && preferences.compared.length>=5} onClick={()=>toggleCompared({id:hospital.id,name:hospital.name})}>{selected?"Remove from comparison":"Add to comparison"}</button>
+    <div className="border-t border-[#e5edf1] px-5 py-4 sm:px-6">
+      <ScoreBreakdown hospital={hospital} />
+      <button className="mt-3 inline-flex items-center gap-2 text-sm font-bold text-compass-700 hover:text-compass-950 hover:underline disabled:opacity-50" disabled={!selected && preferences.compared.length>=5} onClick={()=>toggleCompared({id:hospital.id,name:hospital.name})}>{selected?"− Remove from comparison":"+ Add to comparison"}</button>
     </div>
+    </article>
   );
 }

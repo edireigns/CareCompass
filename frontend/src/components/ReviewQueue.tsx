@@ -23,7 +23,7 @@ export default function ReviewQueue() {
   }, onSuccess: () => { setSelected(null); setNote(""); cache.invalidateQueries(); } });
   function choose(item: Item) { setSelected(item); setAction("reviewed"); setSource(item.source_url); setNote(""); setLatitude(""); setLongitude(""); setNewName(""); setExpiresOn(""); save.reset(); }
   const actions = selected?.kind === "address" ? ["reviewed", "correct"] : selected?.kind === "record" ? ["reviewed", "confirm", "correct", "retire"] : ["reviewed"];
-  return <section className="space-y-4 rounded-2xl border border-slate-200 bg-white p-6">
+  return <section className="surface-card space-y-4 p-6">
     <h2 className="font-display text-2xl text-compass-950">Data review queue</h2>
     <p className="text-sm text-slate-600">Review unmatched locations, directory records due for rechecking, and hospitals absent from the latest complete CMS release. An absence alone does not mean a hospital closed. Each review keeps its source and correction history.</p>
     <p className="text-sm text-slate-600">Open items: {Object.entries(queue.data?.counts || {}).map(([key, value]) => `${key} ${value}`).join(" · ") || "loading…"}</p>

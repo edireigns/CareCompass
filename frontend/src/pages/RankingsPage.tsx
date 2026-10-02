@@ -12,16 +12,18 @@ export default function RankingsPage() {
   useEffect(() => { const timer = setTimeout(() => setApplied(weights), 300); return () => clearTimeout(timer); }, [weights]);
   const { data, isFetching, isError } = useRankings(10, applied, point);
   const valid = Object.values(weights).some(v => v > 0);
-  return <div className="mx-auto max-w-6xl px-6 py-10">
-    <h1 className="font-display text-3xl text-compass-950">Top-ranked hospitals</h1>
-    <p className="mb-6 mt-3 text-sm text-slate-600">Adjust priorities to recalculate results. Weights are normalized automatically. Missing measures are excluded. Hospitals with at least 50% weighted coverage appear first; expand a score to see its calculation. Historical ED duration is not a current wait estimate.</p>
-    <div className="grid gap-6 md:grid-cols-[300px_1fr]">
+  return <div className="page-shell">
+    <p className="section-kicker">Your priorities, your view</p>
+    <h1 className="page-title mt-2">Hospital rankings.</h1>
+    <p className="page-intro mb-8">Adjust priorities to recalculate results. Missing measures are excluded, and hospitals with at least 50% weighted data coverage appear first. Open a score to see its calculation and reporting dates.</p>
+    <div className="grid items-start gap-8 lg:grid-cols-[310px_minmax(0,1fr)]">
       <aside className="space-y-4">
         <RankingWeightSliders weights={weights} onChange={setWeights} hasLocation={!!point} />
         <LocationInput point={point} onChange={setPoint} />
         <button type="button" className="secondary-button w-full" onClick={() => setWeights(DEFAULT_WEIGHTS)}>Reset priorities</button>
       </aside>
-      <section aria-live="polite" className="space-y-4">
+      <section aria-live="polite" className="min-w-0 space-y-5">
+        <div className="surface-card px-5 py-4 text-sm text-[#536b7a]">Historical ED duration is not a current wait estimate. Scores are preference aids based on available public measures.</div>
         {!valid && <p className="rounded-xl bg-amber-50 p-4 text-amber-800">Set at least one priority above zero.</p>}
         {valid && isFetching && <p className="text-compass-700">Updating rankings…</p>}
         {valid && isError && <p role="alert" className="text-rose-700">Rankings could not be loaded. Please try again.</p>}

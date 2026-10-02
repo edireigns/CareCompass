@@ -18,7 +18,7 @@ export default function LocationInput({ point, onChange }: { point?: Point; onCh
     if (!lat.trim() || !lon.trim() || !Number.isFinite(a) || !Number.isFinite(b) || Math.abs(a) > 90 || Math.abs(b) > 180) { setMessage("Enter a latitude from −90 to 90 and longitude from −180 to 180."); return; }
     onChange({ lat: a, lon: b }); setMessage("");
   }
-  return <div className="space-y-3 rounded-xl border border-slate-200 bg-white p-4">
+  return <div className="surface-card space-y-3 p-5">
     <button type="button" onClick={locate} className="secondary-button w-full">Use my location</button>
     {point && <p className="text-sm text-compass-700">Location set. <button type="button" className="underline" onClick={() => onChange(undefined)}>Clear location</button></p>}
     <p className="text-xs text-slate-500">Remembered in this tab’s session until you clear or reset it. Distance is straight-line distance, not driving time.</p>

@@ -68,13 +68,13 @@ export default function AdminPage() {
     try { setRecords(parseCSV(await file.text())); } catch (e) { setFileError(e instanceof Error ? e.message : "Could not read this CSV."); }
   }
   const running = !!data?.running || refresh.isPending || backup.isPending;
-  return <div className="mx-auto max-w-6xl space-y-8 px-6 py-10">
-    <header><p className="section-kicker">Data management</p><h1 className="mt-2 font-display text-3xl text-compass-950">Keep your hospital data up to date.</h1><p className="mt-3 text-slate-600">Refresh public datasets, see source coverage, and import verified directory records. Data-changing actions are limited to this computer.</p></header>
+  return <div className="page-shell max-w-6xl space-y-8">
+    <header><p className="section-kicker">Data management</p><h1 className="page-title mt-2">Keep hospital data current.</h1><p className="page-intro">Refresh public datasets, see source coverage, and import verified directory records. Data-changing actions are limited to this computer.</p></header>
     <CoveragePanel />
     <ReviewQueue />
     {isLoading && <p>Loading source status…</p>}{isError && <p role="alert" className="text-rose-700">Data status could not be loaded. Check that the updated backend is running.</p>}
-    {data && <div className="grid grid-cols-2 gap-4 md:grid-cols-4">{[["Hospitals", data.counts.hospitals], ["Matched coordinates", data.counts.coordinates], ["Detailed measures", data.counts.measures], ["Hospitals with verified plans", data.counts.insurance_hospitals]].map(([label, value]) => <div key={label} className="rounded-2xl border border-slate-200 bg-white p-5"><p className="text-sm text-slate-500">{label}</p><p className="mt-2 text-3xl font-semibold text-compass-950">{Number(value || 0).toLocaleString()}</p></div>)}</div>}
-    <section className="space-y-4 rounded-2xl border border-slate-200 bg-white p-6">
+    {data && <div className="grid grid-cols-2 gap-4 md:grid-cols-4">{[["Hospitals", data.counts.hospitals], ["Matched coordinates", data.counts.coordinates], ["Detailed measures", data.counts.measures], ["Hospitals with verified plans", data.counts.insurance_hospitals]].map(([label, value]) => <div key={label} className="surface-card p-5"><p className="text-sm text-slate-500">{label}</p><p className="mt-2 text-3xl font-semibold text-compass-950">{Number(value || 0).toLocaleString()}</p></div>)}</div>}
+    <section className="surface-card space-y-4 p-6">
       <h2 className="font-display text-2xl text-compass-950">Database backups</h2>
       <p className="text-sm text-slate-600">A checksum-checked database archive is saved before every refresh, directory import, and restore. If backup fails, the data change stops. Choose a folder on another drive to copy every new backup there. When enabled, a failed second copy also stops data changes.</p>
       <p className="text-sm">Other-drive copy: <strong>{mirror.data?.enabled ? (mirror.data.available ? "enabled and available" : "enabled but drive unavailable") : "not configured"}</strong>{mirror.data?.destination && ` · ${mirror.data.destination}`}</p>
@@ -88,7 +88,7 @@ export default function AdminPage() {
       {verify.isError && <p role="alert" className="text-rose-700">{errorText(verify.error)}</p>}{verify.isSuccess && <p role="status" className="text-compass-700">Restore verification passed: {verify.data.table_counts.hospitals.toLocaleString()} hospitals.</p>}
       <ul className="space-y-2 text-xs text-slate-600">{data?.backups?.slice(0,10).map(b => <li className="flex flex-wrap items-center gap-2" key={b.name}><span>{new Date(b.created_at).toLocaleString()} · {b.reason} · {b.location || "local"} · {b.verification || "not restore-tested"} · {b.name}</span><button className="text-compass-700 underline" disabled={verify.isPending || running} onClick={() => verify.mutate(b.name)}>Verify restore</button></li>)}</ul>
     </section>
-    <section className="space-y-4 rounded-2xl border border-slate-200 bg-white p-6">
+    <section className="surface-card space-y-4 p-6">
       <h2 className="font-display text-2xl text-compass-950">Refresh source data</h2>
       <p className="text-sm text-slate-600">By default, import the CSV files already saved with the app. Existing hospital IDs are preserved. Each source is imported in its own transaction; failures retain its previous records.</p>
       <label className="flex gap-3 text-sm"><input type="checkbox" checked={latest} disabled={running} onChange={e => setLatest(e.target.checked)} />Download the latest CMS releases before importing (requires internet)</label>
@@ -99,7 +99,7 @@ export default function AdminPage() {
       <p className="text-xs text-slate-500">Some Census addresses cannot be matched. They remain unknown and are excluded from nearby search. “Last imported” is distinct from each measure’s historical reporting period.</p>
     </section>
     <div className="overflow-x-auto rounded-2xl border border-slate-200"><table className="min-w-full bg-white text-left text-sm"><thead className="bg-slate-100"><tr>{["Source", "Status", "Imported records", "Last imported"].map(h => <th key={h} className="p-4">{h}</th>)}</tr></thead><tbody>{data?.sources.map(s => <tr key={s.key} className="border-t border-slate-100"><td className="p-4"><a className="font-medium text-compass-700 underline" href={s.source_url} target="_blank" rel="noreferrer">{s.title}</a><p className="mt-1 max-w-md text-xs text-slate-500">{s.message || (s.file_present ? "Ready to import" : "Source file missing")}</p></td><td className="p-4">{s.status.replace(/_/g, " ")}{s.refresh_due && <p className="text-amber-800">Refresh recommended (180-day policy)</p>}</td><td className="p-4">{s.rows.toLocaleString()}</td><td className="p-4">{s.last_success ? new Date(s.last_success).toLocaleString() : "Not imported"}</td></tr>)}</tbody></table></div>
-    <section className="space-y-4 rounded-2xl border border-slate-200 bg-white p-6">
+    <section className="surface-card space-y-4 p-6">
       <h2 className="font-display text-2xl text-compass-950">Import verified insurance or specialties</h2>
       <p className="text-sm text-slate-600">Use the hospital’s CMS facility ID, an exact insurance plan or specialty name, a supporting source URL, and the date you verified it. Importing a record means you have checked that source. Unknown coverage stays unknown; expired records are not shown as currently accepted.</p>
       <a className="inline-block text-sm text-compass-700 underline" download="carecompass-directory-template.csv" href={`data:text/csv;charset=utf-8,${encodeURIComponent(columns.join(",") + "\r\n")}`}>Download CSV template</a>

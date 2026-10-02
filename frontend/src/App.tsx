@@ -14,7 +14,7 @@ const AdminPage = lazy(() => import("./pages/AdminPage"));
 
 function AppLoader() {
   return (
-    <div className="grid min-h-[50vh] place-items-center bg-slate-50">
+    <div className="grid min-h-[50vh] place-items-center bg-[#f6f8fb]">
       <div className="text-center">
         <div className="mx-auto h-10 w-10 animate-spin rounded-full border-4 border-compass-100 border-t-compass-700" />
         <p className="mt-4 text-sm font-medium text-slate-600">Loading CareCompass…</p>
@@ -42,8 +42,8 @@ export default function App() {
           </Routes>
         </Suspense>
       </main>
-      <footer className="border-t border-slate-200 bg-white">
-        <div className="mx-auto flex max-w-7xl flex-col gap-2 px-5 py-6 text-sm text-slate-500 sm:flex-row sm:items-center sm:justify-between lg:px-8">
+      <footer className="border-t border-[#dce6ed] bg-compass-950 text-white">
+        <div className="mx-auto flex max-w-7xl flex-col gap-2 px-5 py-7 text-sm text-[#c1d3dc] sm:flex-row sm:items-center sm:justify-between lg:px-8">
           <span>© 2026 CareCompass</span>
           <span>Hospital information is educational and not medical advice.</span>
         </div>
